@@ -6,6 +6,7 @@ import Swal from 'sweetalert2';
 
 const AllUsers = () => {
     const { data: users = [], refetch } = useQuery(["users"], async () => {
+        console.log('users', users);
         const res = await fetch("http://localhost:5000/users")
         return res.json()
     })
@@ -54,6 +55,7 @@ const AllUsers = () => {
                     <tbody>
                         {
                             users.map((user, index) => <tr key={user._id}>
+
                                 <th>{index + 1}</th>
                                 <td>{user.name}</td>
                                 <td>{user.email}</td>
@@ -65,7 +67,6 @@ const AllUsers = () => {
                                 <td><button onClick={() => handleDelete(user)} className="btn btn-ghost btn-small bg-red-600 text-white"><FaTrashAlt></FaTrashAlt></button></td>
                             </tr>)
                         }
-
                     </tbody>
                 </table>
             </div>
