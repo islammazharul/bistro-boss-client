@@ -1,13 +1,15 @@
 import React from 'react';
+import UseMenu from '../../../hooks/UseMenu';
 import { Helmet } from 'react-helmet-async';
-import useCart from '../../../hooks/useCart';
+import SectionTitle from '../../../components/SectionTitle/SectionTitle';
 import { FaTrashAlt } from 'react-icons/fa';
+import useAxiosSecure from '../../../hooks/useAxiosSecure';
 import Swal from 'sweetalert2';
-import { Link } from 'react-router-dom';
 
-const MyCart = () => {
-    const [cart, refetch] = useCart()
-    const total = cart.reduce((sum, item) => item.price + sum, 0)
+const ManageItems = () => {
+    const [menu, , refetch] = UseMenu();
+    const [axiosSecure] = useAxiosSecure();
+
 
     const handleDelete = item => {
         Swal.fire({
@@ -20,12 +22,9 @@ const MyCart = () => {
             confirmButtonText: 'Yes, delete it!'
         }).then((result) => {
             if (result.isConfirmed) {
-                fetch(`http://localhost:5000/cart/${item._id}`, {
-                    method: "DELETE"
-                })
-                    .then(res => res.json())
-                    .then(data => {
-                        if (data.deletedCount > 0) {
+                axiosSecure.delete(`/menu/${item._id}`)
+                    .then(res => {
+                        if (res.data.deletedCount > 0) {
                             refetch()
                             Swal.fire(
                                 'Deleted!',
@@ -37,19 +36,17 @@ const MyCart = () => {
 
             }
         })
+
     }
 
     return (
-        <div className='w-full max-h-full'>
+        <div className='w-full h-full'>
             <Helmet>
-                <title>BISTRO BOSS | My Cart</title>
+                <title>BISTRO BOSS | Manage Items</title>
             </Helmet>
-            <div className='uppercase font-semibold flex justify-evenly items-center h-[60px] sticky top-0 z-50'>
-                <h3 className="text-3xl">Total Items: {cart.length}</h3>
-                <h3 className="text-3xl">Total Price: ${total}</h3>
-                <Link to="/dashboard/payment">
-                    <button className='btn btn-warning btn-sm'>pay</button>
-                </Link>
+            <SectionTitle subHeading="Hurry Up!" heading="MANAGE ALL ITEMS"></SectionTitle>
+            <div className='uppercase font-semibold h-[60px] sticky top-0 z-50'>
+                <h3 className="text-3xl">Total Items: {menu.length}</h3>
             </div>
             <div className="overflow-x-auto w-full">
                 <table className="table w-full">
@@ -61,12 +58,13 @@ const MyCart = () => {
                             <th>ITEM NAME</th>
                             <th>PRICE</th>
                             <th>ACTION</th>
+                            <th>ACTION</th>
 
                         </tr>
                     </thead>
                     <tbody>
                         {
-                            cart.map((item, index) => <tr
+                            menu.map((item, index) => <tr
                                 key={item._id}
                             >
                                 <td>
@@ -86,12 +84,13 @@ const MyCart = () => {
                                 </td>
                                 <td className='text-end'>$ {item.price}</td>
                                 <td>
+                                    <button /* onClick={() => handleDelete(item)} */ className="btn btn-ghost btn-small bg-red-600 text-white"><FaTrashAlt></FaTrashAlt></button>
+                                </td>
+                                <td>
                                     <button onClick={() => handleDelete(item)} className="btn btn-ghost btn-small bg-red-600 text-white"><FaTrashAlt></FaTrashAlt></button>
                                 </td>
                             </tr>)
                         }
-
-
                     </tbody>
 
                 </table>
@@ -100,4 +99,4 @@ const MyCart = () => {
     );
 };
 
-export default MyCart;
+export default ManageItems;

@@ -29,6 +29,7 @@ const AddItems = () => {
                         .then(data => {
                             console.log('after posting new menu item', data.data);
                             if (data.data.insertedId) {
+                                reset()
                                 Swal.fire({
                                     position: 'top-end',
                                     icon: 'success',

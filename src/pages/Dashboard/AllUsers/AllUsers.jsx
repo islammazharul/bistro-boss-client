@@ -54,7 +54,7 @@ const AllUsers = () => {
                     </thead>
                     <tbody>
                         {
-                            users.map((user, index) => <tr key={user._id}>
+                            users.length > 0 && users.map((user, index) => <tr key={user._id}>
 
                                 <th>{index + 1}</th>
                                 <td>{user.name}</td>
